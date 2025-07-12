@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  blog-citrea:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: blog-citrea
+    restart: always
+    env_file:
+      - .env
+    # No ports exposed as requested
+    # Connect to same network as cloudflare-tunnel container
+    networks:
+      - my-net
+    # Optional: Add health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+# Use same network as cloudflare-tunnel container
+networks:
+  my-net:
+    external: true 

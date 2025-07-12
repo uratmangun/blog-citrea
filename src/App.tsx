@@ -3,8 +3,7 @@ import { Routes, Route, Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { ArrowRight } from 'lucide-react';
-import { StagewiseToolbar } from '@stagewise/toolbar-react';
-import ReactPlugin from '@stagewise-plugins/react';
+
 
 import { Badge } from './components/ui/badge';
 import { Button } from './components/ui/button';
@@ -176,11 +175,7 @@ const Home: React.FC = () => {
 const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <StagewiseToolbar 
-        config={{
-          plugins: [ReactPlugin],
-        }}
-      />
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/post/:id" element={<BlogPostPage />} />
