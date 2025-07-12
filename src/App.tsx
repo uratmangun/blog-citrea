@@ -3,9 +3,13 @@ import { Routes, Route, Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { ArrowRight } from 'lucide-react';
+import { StagewiseToolbar } from '@stagewise/toolbar-react';
+import ReactPlugin from '@stagewise-plugins/react';
+
 import { Badge } from './components/ui/badge';
 import { Button } from './components/ui/button';
 import { Card, CardContent, CardFooter } from './components/ui/card';
+import { Input } from './components/ui/input';
 import { supabase } from './lib/supabaseClient';
 
 import BlogPostPage from './components/BlogPostPage';
@@ -16,6 +20,7 @@ import EditPostPage from './components/EditPostPage';
 const Home: React.FC = () => {
   const [posts, setPosts] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [searchTerm, setSearchTerm] = React.useState('');
 
   React.useEffect(() => {
     const fetchPosts = async () => {
@@ -36,6 +41,12 @@ const Home: React.FC = () => {
     fetchPosts();
   }, []);
   const { isConnected } = useAccount();
+
+  // Filter posts based on search term
+  const filteredPosts = posts.filter(post =>
+    post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (post.description && post.description.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
   return (
     <>
       {/* Hero Section */}
@@ -61,15 +72,27 @@ const Home: React.FC = () => {
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">Featured Blog Posts</h2>
+          <div className="max-w-md mx-auto mb-8">
+            <Input
+              type="text"
+              placeholder="Search by title or description..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full"
+            />
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {loading ? (
             <p>Loading posts...</p>
-          ) : posts.length > 0 ? (
-            posts.map((post) => (
+          ) : filteredPosts.length > 0 ? (
+            filteredPosts.map((post) => (
               <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
                 <CardContent className="p-6">
                   <h3 className="text-xl font-semibold mb-2">{post.title}</h3>
-                  <p className="text-muted-foreground line-clamp-3">{post.content}</p>
+                  <p className="text-muted-foreground line-clamp-3">{post.description}</p>
+                  <p className="text-sm text-primary font-medium mt-2">
+                    Price: {post.price} cBTC
+                  </p>
                 </CardContent>
                 <CardFooter className="p-6 pt-0">
                   <Button asChild variant="link" className="p-0 h-auto">
@@ -81,7 +104,9 @@ const Home: React.FC = () => {
               </Card>
             ))
           ) : (
-            <p>No posts found.</p>
+            <p className="text-center text-muted-foreground">
+              {posts.length === 0 ? 'No posts found.' : 'No posts match your search.'}
+            </p>
           )}
         </div>
         </div>
@@ -118,7 +143,6 @@ const Home: React.FC = () => {
           <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
             Join a growing community of writers, creators, and readers on the decentralized web. Create your account today and start publishing.
           </p>
-          <Button size="lg">Create Your Account</Button>
         </div>
       </section>
 
@@ -152,6 +176,11 @@ const Home: React.FC = () => {
 const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <StagewiseToolbar 
+        config={{
+          plugins: [ReactPlugin],
+        }}
+      />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/post/:id" element={<BlogPostPage />} />

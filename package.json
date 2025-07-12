@@ -11,8 +11,6 @@
     "build": "bun run build.ts"
   },
   "dependencies": {
-    "@21st-extension/react": "^0.5.14",
-    "@21st-extension/toolbar-react": "^0.5.14",
     "@hookform/resolvers": "^4.1.0",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-label": "^2.1.2",
@@ -20,6 +18,8 @@
     "@radix-ui/react-separator": "^1.1.7",
     "@radix-ui/react-slot": "^1.2.3",
     "@rainbow-me/rainbowkit": "^2.2.8",
+    "@stagewise-plugins/react": "^0.5.2",
+    "@stagewise/toolbar-react": "^0.5.2",
     "@supabase/supabase-js": "^2.50.5",
     "@tanstack/react-query": "^5.82.0",
     "@types/react-router-dom": "^5.3.3",

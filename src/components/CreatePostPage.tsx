@@ -14,6 +14,7 @@ import { useAccount } from 'wagmi';
 
 const formSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters long.'),
+  description: z.string().min(10, 'Description must be at least 10 characters long.'),
   price: z.coerce.number().min(0, 'Price must be a positive number.'),
   content: z.string().min(20, 'Content must be at least 20 characters long.'),
 });
@@ -26,6 +27,7 @@ const CreatePostPage: React.FC = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
+      description: '',
       price: 0,
       content: '',
     },
@@ -40,6 +42,7 @@ const CreatePostPage: React.FC = () => {
     const { error } = await supabase.from('posts').insert([
       {
         title: values.title,
+        description: values.description,
         content: values.content,
         price: values.price,
         author_address: address,
@@ -59,9 +62,9 @@ const CreatePostPage: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-16 md:py-24">
       <Button asChild variant="outline" className="mb-8">
-        <Link to="/">
+        <Link to="/dashboard">
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Home
+          Back to Dashboard
         </Link>
       </Button>
       <h1 className="text-3xl font-bold mb-8">Create a New Blog Post</h1>
@@ -88,6 +91,24 @@ const CreatePostPage: React.FC = () => {
                 <FormLabel>Price (in cBTC)</FormLabel>
                 <FormControl>
                   <Input type="number" placeholder="Enter a price for your post" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Description</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Write a short description for your post..."
+                    className="resize-none"
+                    rows={4}
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

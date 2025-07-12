@@ -14,7 +14,8 @@ import { ArrowLeft } from 'lucide-react';
 
 const formSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters long.'),
-  content: z.string().min(10, 'Content must be at least 10 characters long.'),
+  content: z.string().min(1, 'Content is required'),
+  description: z.string().optional(),
   price: z.coerce.number().min(0, 'Price must be a positive number.'),
 });
 
@@ -30,6 +31,7 @@ const EditPostPage: React.FC = () => {
     defaultValues: {
       title: '',
       content: '',
+      description: '',
       price: 0,
     },
   });
@@ -45,7 +47,7 @@ const EditPostPage: React.FC = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from('posts')
-        .select('title, content, price, author_address')
+        .select('title, content, description, price, author_address')
         .eq('id', id)
         .single();
 
@@ -65,6 +67,7 @@ const EditPostPage: React.FC = () => {
       form.reset({
         title: data.title,
         content: data.content,
+        description: data.description ?? '',
         price: data.price ?? 0,
       });
 
@@ -82,6 +85,7 @@ const EditPostPage: React.FC = () => {
       .update({
         title: values.title,
         content: values.content,
+        description: values.description,
         price: values.price,
       })
       .eq('id', id);
@@ -137,6 +141,19 @@ const EditPostPage: React.FC = () => {
             />
             <FormField
               control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder="Your post description" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="content"
               render={({ field }) => (
                 <FormItem>
@@ -157,7 +174,7 @@ const EditPostPage: React.FC = () => {
               name="price"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Price (in ETH)</FormLabel>
+                  <FormLabel>Price (in cBTC)</FormLabel>
                   <FormControl>
                     <Input type="number" step="0.01" placeholder="0.05" {...field} />
                   </FormControl>
