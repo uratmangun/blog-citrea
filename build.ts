@@ -150,6 +150,8 @@ const result = await build({
   sourcemap: "linked",
   define: {
     "process.env.NODE_ENV": JSON.stringify("production"),
+    "process.env.BUN_PUBLIC_SUPABASE_URL": JSON.stringify(process.env.BUN_PUBLIC_SUPABASE_URL || ""),
+    "process.env.BUN_PUBLIC_SUPABASE_ANON_KEY": JSON.stringify(process.env.BUN_PUBLIC_SUPABASE_ANON_KEY || ""),
   },
   ...cliConfig, // Merge in any CLI-provided options
 });
